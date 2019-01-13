@@ -41,7 +41,8 @@ const (
 )
 
 const (
-	DataBlockSize = 512 // 报文包数据块大小
+	DataBlockSize = 512 // 数据块大小
+	DatagramSize  = 516 //报文包大小
 )
 
 var (
