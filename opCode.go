@@ -1,6 +1,8 @@
 package tftpimpl
 
-import "github.com/pkg/errors"
+import (
+	"errors"
+)
 
 const (
 	opRRQ  = uint16(1)
@@ -42,7 +44,7 @@ const (
 
 const (
 	DataBlockSize = 512 // 数据块大小
-	DatagramSize  = 516 //报文包大小
+	DatagramSize  = 516 // 报文包大小
 )
 
 var (
