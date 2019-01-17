@@ -1,4 +1,4 @@
-package tftpimpl
+package tftp
 
 func Uint16ToBytes(v uint16) (b []byte) {
 	b = make([]byte, 2)

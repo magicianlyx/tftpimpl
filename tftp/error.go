@@ -1,4 +1,4 @@
-package tftpimpl
+package tftp
 
 import (
 	"runtime"

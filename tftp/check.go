@@ -1,4 +1,4 @@
-package tftpimpl
+package tftp
 
 // 检查mode值是否合法
 func CheckMode(mode string) bool {

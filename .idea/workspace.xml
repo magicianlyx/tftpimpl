@@ -2,12 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="74fdfe3b-53f3-42bc-8f99-9073c34a869b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tftp/client.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tftp/server.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tftp/transfer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datagram.go" beforeDir="false" afterPath="$PROJECT_DIR$/datagram.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/opCode.go" beforeDir="false" afterPath="$PROJECT_DIR$/opCode.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transfer.go" beforeDir="false" afterPath="$PROJECT_DIR$/transfer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/transter_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/check.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/check.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/datagram.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/datagram.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datagram_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/datagram_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/error.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/error.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opCode.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/opCode.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protocol.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/protocol.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transfer.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/transter_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/tftp/utils.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -58,31 +68,40 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="transfer.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/transfer.go">
+      <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="83" column="19" lean-forward="true" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
+            <state relative-caret-position="171">
+              <caret line="9" column="44" lean-forward="true" selection-start-line="9" selection-start-column="44" selection-end-line="9" selection-end-column="44" />
               <folding>
-                <element signature="e#18#42#0" expanded="true" />
+                <element signature="e#18#45#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="datagram.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/datagram.go">
+      <file leaf-file-name="2.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/2.txt">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="client.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tftp/client.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="373">
-              <caret line="356" column="18" selection-start-line="356" selection-start-column="5" selection-end-line="356" selection-end-column="18" />
+            <state relative-caret-position="298">
+              <caret line="73" column="29" lean-forward="true" selection-start-line="73" selection-start-column="29" selection-end-line="73" selection-end-column="29" />
               <folding>
-                <element signature="n#!!block;n#Unpack#0" />
-                <element signature="n#!!block;n#Pack#1" />
-                <element signature="n#!!block;n#Unpack#1" />
-                <element signature="n#!!block;n#Pack#3" />
-                <element signature="n#!!block;n#Unpack#3" />
-                <element signature="n#!!block;n#NewACKDatagram#1" />
+                <element signature="e#14#67#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="error.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tftp/error.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="76">
+              <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -105,6 +124,7 @@
       <find>CheckMode</find>
       <find>ResolveUDPAddr</find>
       <find>config.</find>
+      <find>NewServer</find>
     </findStrings>
     <replaceStrings>
       <replace>Unpack([]byte)</replace>
@@ -122,19 +142,22 @@
         <option value="$PROJECT_DIR$/encode/flag.go" />
         <option value="$PROJECT_DIR$/encode/pakcet.go" />
         <option value="$PROJECT_DIR$/Datagram.go" />
-        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/utils.go" />
         <option value="$PROJECT_DIR$/check.go" />
         <option value="$PROJECT_DIR$/datagramv2.go" />
         <option value="$PROJECT_DIR$/datagram_test.go" />
         <option value="$PROJECT_DIR$/protocol.go" />
-        <option value="$PROJECT_DIR$/client.go" />
         <option value="$PROJECT_DIR$/error.go" />
         <option value="$PROJECT_DIR$/opCode.go" />
-        <option value="$PROJECT_DIR$/transter_test.go" />
         <option value="$PROJECT_DIR$/main/main.go" />
-        <option value="$PROJECT_DIR$/transfer.go" />
+        <option value="$PROJECT_DIR$/transter_test.go" />
         <option value="$PROJECT_DIR$/datagram.go" />
+        <option value="$PROJECT_DIR$/transfer.go" />
+        <option value="$PROJECT_DIR$/client.go" />
+        <option value="$PROJECT_DIR$/server.go" />
+        <option value="$PROJECT_DIR$/tftp/server.go" />
+        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/tftp/client.go" />
       </list>
     </option>
   </component>
@@ -148,8 +171,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="22" />
-    <option name="y" value="-19" />
+    <option name="x" value="455" />
+    <option name="y" value="110" />
     <option name="width" value="1456" />
     <option name="height" value="876" />
   </component>
@@ -159,7 +182,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -171,6 +193,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -181,6 +204,14 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\golang\src\tftpimpl" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\golang\src\tftpimpl\tftp" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -194,7 +225,23 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestUDP in tftpimpl">
+  <component name="RunManager" selected="Go Build.go build main.go (1)">
+    <configuration name="go build client.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="tftpimpl" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/tftp/client.go" />
+      <directory value="$PROJECT_DIR$/" />
+    </configuration>
+    <configuration name="go build main.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="tftpimpl" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <directory value="$PROJECT_DIR$/" />
+    </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="tftpimpl" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -203,28 +250,6 @@
       <filePath value="$PROJECT_DIR$/main/main.go" />
       <package value="tftpimpl" />
       <directory value="$PROJECT_DIR$/" />
-    </configuration>
-    <configuration name="TestACKDatagram in tftpimpl" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="tftpimpl" />
-      <working_directory value="$PROJECT_DIR$" />
-      <go_parameters value="-i" />
-      <framework value="gotest" />
-      <kind value="PACKAGE" />
-      <package value="tftpimpl" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestACKDatagram$" />
-    </configuration>
-    <configuration name="TestDATADatagram in tftpimpl" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="tftpimpl" />
-      <working_directory value="$PROJECT_DIR$" />
-      <go_parameters value="-i" />
-      <framework value="gotest" />
-      <kind value="PACKAGE" />
-      <package value="tftpimpl" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestDATADatagram$" />
     </configuration>
     <configuration name="TestERRDatagram in tftpimpl" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="tftpimpl" />
@@ -249,19 +274,19 @@
       <pattern value="^TestUDP$" />
     </configuration>
     <list>
-      <item itemvalue="Go Test.TestDATADatagram in tftpimpl" />
-      <item itemvalue="Go Test.TestACKDatagram in tftpimpl" />
       <item itemvalue="Go Test.TestERRDatagram in tftpimpl" />
       <item itemvalue="Go Test.TestUDP in tftpimpl" />
       <item itemvalue="Go Build.go build main.go" />
+      <item itemvalue="Go Build.go build main.go (1)" />
+      <item itemvalue="Go Build.go build client.go" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build main.go (1)" />
+        <item itemvalue="Go Build.go build client.go" />
         <item itemvalue="Go Test.TestUDP in tftpimpl" />
         <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="Go Test.TestERRDatagram in tftpimpl" />
-        <item itemvalue="Go Test.TestACKDatagram in tftpimpl" />
-        <item itemvalue="Go Test.TestDATADatagram in tftpimpl" />
       </list>
     </recent_temporary>
   </component>
@@ -301,17 +326,17 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49763033" visible="true" weight="0.17004265" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49763033" visible="true" weight="0.17430703" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.43049932" />
       <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.21592148" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.40755737" />
       <window_info id="Favorites" order="2" sideWeight="0.50236964" side_tool="true" weight="0.1683381" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.40755737" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -328,21 +353,96 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/transter_test.go">
+    <entry file="file://$PROJECT_DIR$/tftp/transfer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="912">
+          <caret line="48" column="4" lean-forward="true" selection-start-line="2" selection-start-column="2" selection-end-line="48" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/datagram.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5225">
+          <caret line="356" column="11" lean-forward="true" selection-start-line="356" selection-start-column="11" selection-end-line="356" selection-end-column="11" />
+          <folding>
+            <element signature="n#!!block;n#Unpack#0" />
+            <element signature="n#!!block;n#Pack#1" />
+            <element signature="n#!!block;n#Unpack#1" />
+            <element signature="n#!!block;n#Unpack#3" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3040">
+          <caret line="166" lean-forward="true" selection-start-line="154" selection-start-column="1" selection-end-line="166" />
+          <folding>
+            <element signature="e#14#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/check.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/runtime/Go/src/net/udpsock.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="33" column="18" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/transter_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+          <folding>
+            <element signature="e#18#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1729">
+          <caret line="95" column="31" selection-start-line="95" selection-start-column="31" selection-end-line="95" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/transfer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1520">
+          <caret line="83" column="19" lean-forward="true" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/datagram.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5073">
+          <caret line="356" column="18" selection-start-line="356" selection-start-column="5" selection-end-line="356" selection-end-column="18" />
+          <folding>
+            <element signature="n#!!block;n#Unpack#0" />
+            <element signature="n#!!block;n#Pack#1" />
+            <element signature="n#!!block;n#Unpack#1" />
+            <element signature="n#!!block;n#Unpack#3" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/transter_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="95">
           <caret line="9" column="18" lean-forward="true" selection-start-line="9" selection-start-column="18" selection-end-line="9" selection-end-column="18" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="42" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/opCode.go">
+    <entry file="file://$PROJECT_DIR$/main/main.go" />
+    <entry file="file://$PROJECT_DIR$/tftp/opCode.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="836">
           <caret line="44" column="31" selection-start-line="44" selection-start-column="31" selection-end-line="44" selection-end-column="31" />
@@ -352,37 +452,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/error.go">
+    <entry file="file://$PROJECT_DIR$/tftp/error.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
-          <folding>
-            <element signature="e#18#46#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transfer.go">
+    <entry file="file://$PROJECT_DIR$/tftp/transfer.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1387">
           <caret line="76" column="56" selection-start-line="76" selection-start-column="56" selection-end-line="76" selection-end-column="56" />
-          <folding>
-            <element signature="e#18#42#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/encode/flag.go" />
     <entry file="file://$PROJECT_DIR$/encode/pakcet.go" />
-    <entry file="file://$PROJECT_DIR$/main.go" />
     <entry file="file://$PROJECT_DIR$/datagram.bck.go" />
-    <entry file="file://$PROJECT_DIR$/check.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../wxsdk/tools/utils.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="110">
@@ -392,17 +478,10 @@
     </entry>
     <entry file="file://E:/Go/src/net/net.go" />
     <entry file="file://E:/Go/src/net/dial.go" />
-    <entry file="file://$PROJECT_DIR$/client.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="16" selection-start-column="16" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://E:/Go/src/testing/testing.go" />
     <entry file="file://E:/Go/src/runtime/panic.go" />
     <entry file="file://E:/Go/src/net/udpsock.go" />
-    <entry file="file://$PROJECT_DIR$/opCode.go">
+    <entry file="file://$PROJECT_DIR$/tftp/opCode.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="475">
           <caret line="25" column="34" lean-forward="true" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="34" />
@@ -412,72 +491,105 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protocol.go">
+    <entry file="file://$PROJECT_DIR$/tftp/protocol.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="38">
           <caret line="2" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.go">
+    <entry file="file://$PROJECT_DIR$/tftp/utils.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
           <caret line="16" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/error.go">
+    <entry file="file://$PROJECT_DIR$/main/main.go" />
+    <entry file="file://$PROJECT_DIR$/tftp/datagram_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+        <state relative-caret-position="207">
+          <caret line="80" column="10" lean-forward="true" selection-start-line="80" selection-start-column="10" selection-end-line="80" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/runtime/Go/src/net/udpsock.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="33" column="18" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/check.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/transter_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
           <folding>
-            <element signature="e#18#46#0" expanded="true" />
+            <element signature="e#18#61#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/datagram_test.go">
+    <entry file="file://$PROJECT_DIR$/tftp/transfer.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
+        <state relative-caret-position="912">
+          <caret line="48" column="4" selection-start-line="2" selection-start-column="2" selection-end-line="48" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main/main.go">
+    <entry file="file://$PROJECT_DIR$/tftp/datagram.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="35" column="8" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/transter_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="12" column="6" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/datagram.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="356" column="18" selection-start-line="356" selection-start-column="5" selection-end-line="356" selection-end-column="18" />
+        <state relative-caret-position="5225">
+          <caret line="356" column="11" selection-start-line="356" selection-start-column="11" selection-end-line="356" selection-end-column="11" />
           <folding>
             <element signature="n#!!block;n#Unpack#0" />
             <element signature="n#!!block;n#Pack#1" />
             <element signature="n#!!block;n#Unpack#1" />
-            <element signature="n#!!block;n#Pack#3" />
             <element signature="n#!!block;n#Unpack#3" />
-            <element signature="n#!!block;n#NewACKDatagram#1" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transfer.go">
+    <entry file="file://$PROJECT_DIR$/tftp/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="83" column="19" lean-forward="true" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
+        <state relative-caret-position="38">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="172" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/2.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/error.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="44" lean-forward="true" selection-start-line="9" selection-start-column="44" selection-end-line="9" selection-end-column="44" />
           <folding>
-            <element signature="e#18#42#0" expanded="true" />
+            <element signature="e#18#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tftp/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="298">
+          <caret line="73" column="29" lean-forward="true" selection-start-line="73" selection-start-column="29" selection-end-line="73" selection-end-column="29" />
+          <folding>
+            <element signature="e#14#67#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -1,4 +1,4 @@
-package tftpimpl
+package tftp
 
 import (
 	"testing"
@@ -19,7 +19,7 @@ func TestUDP(t *testing.T) {
 	
 	time.Sleep(time.Second * 3)
 	c := NewClient()
-	err = c.Send("192.168.1.117", 69, []byte("asdf"))
+	err = c.sendData("192.168.1.117", 69, []byte("asdf"))
 	if err != nil {
 		t.Fatalf("%s", err)
 		return

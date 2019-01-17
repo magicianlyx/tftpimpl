@@ -1,4 +1,4 @@
-package tftpimpl
+package tftp
 
 import (
 	"math"
@@ -384,5 +384,20 @@ func ParseDatagram(data []byte) (interface{}, error) {
 	} else {
 		return nil, ErrDatagram
 	}
-	
+}
+
+// 切割数据
+func SplitDataSegment(data []byte, size int) ([][]byte, int) {
+	min := func(v1, v2 int) int {
+		return int(math.Min(float64(v1), float64(v2)))
+	}
+	result := [][]byte{}
+	segment := 0
+	l := len(data)
+	for i := 0; i <= l; i += size {
+		item := data[min(i*size, l):min((i+1)*size, l)]
+		result = append(result, item)
+		segment += 1
+	}
+	return result, segment
 }
