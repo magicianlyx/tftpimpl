@@ -6,8 +6,9 @@ import (
 
 func main() {
 	c := tftp.NewClient()
-	c.GetFile("192.168.2.35",69,"1.txt","3.txt")
-	
+	//c.GetFile("192.168.1.111",69,"mp.go","1.txt")
+	c.PutFile("192.168.1.111",69,"1.txt","1.txt")
+
 	// s, err := tftp.NewServer(70)
 	// if err != nil {
 	// 	panic(err)

@@ -3,6 +3,7 @@ package tftp
 import (
 	"math"
 	"os"
+	"time"
 )
 
 func Uint16ToBytes(v uint16) (b []byte) {
@@ -66,4 +67,19 @@ func retryFunc(f func() error, time int) error {
 		}
 	}
 	return err
+}
+
+func waitRecvTimeout(f func(), timeout time.Duration) {
+	wg := make(chan struct{}, )
+	go func() {
+		//ticker := time.NewTicker(time.Second * time.Duration(c.timeout))
+		//<-ticker.C
+		time.Sleep(timeout)
+		wg <- struct{}{}
+	}()
+	go func() {
+		f()
+		wg <- struct{}{}
+	}()
+	<-wg
 }

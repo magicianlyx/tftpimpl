@@ -6,10 +6,12 @@ import (
 	"errors"
 	"os"
 	"io/ioutil"
+	"time"
 )
 
 var (
-	ErrNotFromSource = errors.New("data not from source")
+	ErrTimeOut       = errors.New("wait server time out")
+	ErrIllegalTftpOp = errors.New("illegal tftp operation")
 )
 
 type Article struct {
@@ -20,21 +22,20 @@ type Article struct {
 }
 
 type Client struct {
-	localAddr     *net.UDPAddr
-	timeout       int
-	conn          *net.UDPConn
-	printDetail   bool
-	retry         int // udp传输出错重试次数
+	timeout     time.Duration // 从发送到接受回复的最长时间间隔
+	conn        *net.UDPConn  // 连接tftp服务器的udp回话连接
+	printDetail bool          // 是否打印细节
+	retry       int           // udp传输出错重试次数
 }
 
 func NewClient() *Client {
 	c := &Client{}
 	addr := &net.UDPAddr{}
-	c.localAddr = addr
 	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
 		panic(err)
 	}
+	c.timeout = time.Millisecond * 500
 	c.conn = conn
 	c.printDetail = true
 	c.retry = 3
@@ -43,40 +44,38 @@ func NewClient() *Client {
 
 func (c *Client) GetFile(remoteHost string, remotePort int, fileName string, localFileName string) (error) {
 	fileData := []byte{}
-	err := c.sendData(remoteHost, remotePort, NewRRQDatagram(fileName, modeOctet, nil))
+	n, addr, do, err := c.sendAndRecv(remoteHost, remotePort, NewRRQDatagram(fileName, modeOctet, nil))
 	if err != nil {
 		return err
 	}
 	for {
-		n, addr, data, err := c.waitRecv()
-		if err != nil {
-			
-			return err
-		}
-		i := ParseDatagram(data)
-		switch v := i.(type) {
+		switch v := do.(type) {
 		case *DATADatagram:
-			dataSegment := v.Data[:n]
+			dataSegment := v.Data
 			fileData = append(fileData, dataSegment...)
-			c.sendData(addr.IP.String(), addr.Port, NewACKDatagram(v.BlockId))
 			if n < DataBlockSize {
+				// 最后一段数据
+				c.sendData(addr.IP.String(), addr.Port, NewACKDatagram(v.BlockId))
 				return saveFileData(localFileName, fileData)
+			} else {
+				// 不是最后一段数据
+				n, addr, do, err = c.sendAndRecv(addr.IP.String(), addr.Port, NewACKDatagram(v.BlockId))
 			}
 			break
 		case *OACKDatagram:
-			c.sendData(addr.IP.String(), addr.Port, NewACKDatagram(0))
+			n, addr, do, err = c.sendAndRecv(addr.IP.String(), addr.Port, NewACKDatagram(0))
 			break
 		case *ERRDatagram:
 			return v
-			break
 		default:
-			break
+			return ErrIllegalTftpOp
 		}
 	}
 }
 
 func (c *Client) PutFile(remoteHost string, remotePort int, fileName string, LocalFileName string) (error) {
 	fs, err := os.Open(LocalFileName)
+	defer fs.Close()
 	if err != nil {
 		return err
 	}
@@ -85,38 +84,66 @@ func (c *Client) PutFile(remoteHost string, remotePort int, fileName string, Loc
 		return err
 	}
 	bss, blockCount := splitDataSegment(fileData, DataBlockSize)
-	err = c.sendData(remoteHost, remotePort, NewWRQDatagram(fileName, modeOctet, nil))
+	// 最后一段数据长度为数据块大小时 后面添加一个空的字节数组
+	if len(bss[len(bss)-1]) == DataBlockSize {
+		bss = append(bss, []byte{})
+	}
+	_, addr, do, err := c.sendAndRecv(remoteHost, remotePort, NewWRQDatagram(fileName, modeOctet, nil))
 	if err != nil {
 		return err
 	}
 	for {
-		_, addr, data, err := c.waitRecv()
-		if err != nil {
-			
-			return err
-		}
-		i := ParseDatagram(data)
-		switch v := i.(type) {
+		switch v := do.(type) {
 		case *ACKDatagram:
 			var segmentData = []byte{}
-			if uint16(blockCount) > v.BlockId {
+			if v.BlockId >= uint16(blockCount) {
+				// 发送完毕
+				return nil
+			} else {
 				segmentData = bss[v.BlockId]
 			}
-			c.sendData(addr.IP.String(), addr.Port, NewDATADatagram(v.BlockId+1, segmentData))
+			_, addr, do, err = c.sendAndRecv(addr.IP.String(), addr.Port, NewDATADatagram(v.BlockId+1, segmentData))
 		case *OACKDatagram:
+			// 将会发送第一个数据报文
 			var segmentData = []byte{}
 			if uint16(blockCount) > 0 {
 				segmentData = bss[0]
 			}
-			c.sendData(addr.IP.String(), addr.Port, NewDATADatagram(1, segmentData))
+			_, addr, do, err = c.sendAndRecv(addr.IP.String(), addr.Port, NewDATADatagram(1, segmentData))
 		case *ERRDatagram:
 			return v
 		default:
-		
+			return ErrIllegalTftpOp
 		}
 	}
 }
 
+// 向服务器发送tftp报文并等待响应报文
+func (c *Client) sendAndRecv(remoteHost string, remotePort int, op DatagramOp) (int, *net.UDPAddr, DatagramOp, error) {
+	var n int
+	var addr *net.UDPAddr
+	var data []byte
+	var err error
+	var recv = false // 是否接收成功 recv为false时有可能已经接收到响应 recv为true时一定接收到响应
+	err = c.sendData(remoteHost, remotePort, op)
+	if err != nil {
+		return n, nil, nil, err
+	}
+	waitRecvTimeout(
+		func() {
+			n, addr, data, err = c.waitRecv()
+			recv = true
+		},
+		c.timeout,
+	)
+	if recv {
+		return n, addr, ParseDatagram(data), nil
+	} else {
+		return n, nil, nil, ErrTimeOut
+	}
+}
+
+// 阻塞 等待服务器发送数据包
 func (c *Client) waitRecv() (int, *net.UDPAddr, []byte, error) {
 	data := make([]byte, DatagramSize)
 	n, addr, err := c.conn.ReadFromUDP(data)
@@ -138,7 +165,7 @@ func (c *Client) sendData(remoteHost string, remotePort int, op DatagramOp) (err
 	for i := 0; i < c.retry; i++ {
 		_, err = c.conn.WriteToUDP(op.Pack(), udpAddr)
 		if err != nil {
-		
+
 		} else {
 			err = nil
 			if c.printDetail {
