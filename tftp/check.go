@@ -2,7 +2,7 @@ package tftp
 
 // 检查mode值是否合法
 func CheckMode(mode string) bool {
-	if mode == modeOCTET || mode == modeMail || mode == modeNetAscii {
+	if mode == modeOctet || mode == modeMail || mode == modeNetAscii {
 		return true
 	}
 	return false

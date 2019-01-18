@@ -4,6 +4,7 @@ import (
 	"math"
 	"bytes"
 	"strings"
+	"fmt"
 )
 
 type Datagram struct {
@@ -73,6 +74,8 @@ func (d *Datagram) ToBytes() ([]byte) {
 // /-----------------------
 
 type DatagramOp interface {
+	Op() string
+	Size() int
 	Pack() ([]byte)
 	Unpack([]byte)
 }
@@ -155,6 +158,14 @@ func (d *RRQDatagram) Unpack(b []byte) {
 	return
 }
 
+func (d *RRQDatagram) Op() string {
+	return "RRQ"
+}
+
+func (d *RRQDatagram) Size() int {
+	return len(d.Pack())
+}
+
 type WRQDatagram struct {
 	OpCode   uint16
 	FileName string
@@ -219,6 +230,14 @@ func (d *WRQDatagram) Unpack(b []byte) {
 	return
 }
 
+func (d *WRQDatagram) Op() string {
+	return "WRQ"
+}
+
+func (d *WRQDatagram) Size() int {
+	return len(d.Pack())
+}
+
 type DATADatagram struct {
 	OpCode  uint16
 	BlockId uint16
@@ -262,6 +281,14 @@ func (d *DATADatagram) Unpack(b []byte) {
 	return
 }
 
+func (d *DATADatagram) Op() string {
+	return "DATA"
+}
+
+func (d *DATADatagram) Size() int {
+	return len(d.Pack())
+}
+
 type ACKDatagram struct {
 	OpCode  uint16
 	BlockId uint16
@@ -294,10 +321,21 @@ func (d *ACKDatagram) Unpack(b []byte) () {
 	return
 }
 
+func (d *ACKDatagram) Op() string {
+	return "ACK"
+}
+func (d *ACKDatagram) Size() int {
+	return len(d.Pack())
+}
+
 type ERRDatagram struct {
 	OpCode  uint16
 	ErrCode uint16
 	ErrMsg  string
+}
+
+func (d *ERRDatagram) Error() string {
+	return fmt.Sprintf("%v", d)
 }
 
 func NewERRDatagram(errCode uint16, errMsg string) (*ERRDatagram) {
@@ -327,6 +365,14 @@ func (d *ERRDatagram) Unpack(b []byte) {
 	bss := dg.SplitByByte(byte(0))
 	d.ErrMsg = string(bss[0])
 	return
+}
+
+func (d *ERRDatagram) Op() string {
+	return "ERR"
+}
+
+func (d *ERRDatagram) Size() int {
+	return len(d.Pack())
 }
 
 type OACKDatagram struct {
@@ -366,7 +412,15 @@ func (d *OACKDatagram) Unpack(b []byte) {
 	return
 }
 
-func ParseDatagram(data []byte) (interface{}) {
+func (d *OACKDatagram) Op() string {
+	return "OACK"
+}
+
+func (d *OACKDatagram) Size() int {
+	return len(d.Pack())
+}
+
+func ParseDatagram(data []byte) (DatagramOp) {
 	dg := newDatagramByBytes(data)
 	opCode := BytesToUint16(dg.Get(2))
 	if opCode == opRRQ {
@@ -397,19 +451,27 @@ func ParseDatagram(data []byte) (interface{}) {
 		return nil
 	}
 }
-
-// 切割数据
-func SplitDataSegment(data []byte, size int) ([][]byte, int) {
-	min := func(v1, v2 int) int {
-		return int(math.Min(float64(v1), float64(v2)))
-	}
-	result := [][]byte{}
-	segment := 0
-	l := len(data)
-	for i := 0; i <= l; i += size {
-		item := data[min(i*size, l):min((i+1)*size, l)]
-		result = append(result, item)
-		segment += 1
-	}
-	return result, segment
-}
+//
+// func PackRRQDatagram(fileName string, mode string, options Options) ([]byte) {
+// 	return NewRRQDatagram(fileName, mode, options).Pack()
+// }
+//
+// func PackWRQDatagram(fileName string, mode string, options Options) ([]byte) {
+// 	return NewWRQDatagram(fileName, mode, options).Pack()
+// }
+//
+// func PackDATADatagram(blockId uint16, data []byte) ([]byte) {
+// 	return NewDATADatagram(blockId, data).Pack()
+// }
+//
+// func PackACKDatagram(blockId uint16) ([]byte) {
+// 	return NewACKDatagram(blockId).Pack()
+// }
+//
+// func PackERRDatagram(errCode uint16, errMsg string) ([]byte) {
+// 	return NewERRDatagram(errCode, errMsg).Pack()
+// }
+//
+// func PackOACKDatagram(options Options) ([]byte) {
+// 	return NewOACKDatagram(options).Pack()
+// }

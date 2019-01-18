@@ -1,5 +1,10 @@
 package tftp
 
+import (
+	"math"
+	"os"
+)
+
 func Uint16ToBytes(v uint16) (b []byte) {
 	b = make([]byte, 2)
 	_ = b[1] // bounds check hint to compiler; see golang.org/issue/14808
@@ -20,4 +25,45 @@ func BytesFill(bs []byte, size int) ([]byte) {
 	nbs := make([]byte, size)
 	copy(nbs[:len(bs)], bs)
 	return nbs
+}
+
+// 切割数据
+func splitDataSegment(data []byte, size int) ([][]byte, int) {
+	min := func(v1, v2 int) int {
+		return int(math.Min(float64(v1), float64(v2)))
+	}
+	result := [][]byte{}
+	segment := 0
+	l := len(data)
+	for i := 0; i <= l; i += size {
+		minB := min(i, l)
+		maxB := min(i+size, l)
+		item := make([]byte, maxB-minB)
+		item = data[minB:maxB]
+		result = append(result, item)
+		segment += 1
+	}
+	return result, segment
+}
+
+func saveFileData(fileName string, data []byte) error {
+	os.Remove(fileName)
+	fs, err := os.Create(fileName)
+	defer fs.Close()
+	if err == nil {
+		_, err = fs.Write(data)
+		return err
+	}
+	return err
+}
+
+func retryFunc(f func() error, time int) error {
+	var err error
+	for i := 0; i < time; time++ {
+		err = f()
+		if err == nil {
+			return nil
+		}
+	}
+	return err
 }

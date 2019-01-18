@@ -12,125 +12,139 @@ var (
 	ErrNotFromSource = errors.New("data not from source")
 )
 
+type Article struct {
+	Host string
+	Port int
+	Size int
+	Data []byte
+}
+
 type Client struct {
-	localPort   int
-	timeout     int
-	conn        *net.UDPConn
-	printDetail bool
-	retry       int // udp传输出错重试次数
+	localAddr     *net.UDPAddr
+	timeout       int
+	conn          *net.UDPConn
+	printDetail   bool
+	retry         int // udp传输出错重试次数
 }
 
 func NewClient() *Client {
 	c := &Client{}
 	addr := &net.UDPAddr{}
-	c.localPort = addr.Port
+	c.localAddr = addr
 	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
 		panic(err)
 	}
 	c.conn = conn
+	c.printDetail = true
+	c.retry = 3
 	return c
 }
 
-func (c *Client) sendData(remoteHost string, remotePort int, data []byte) (error) {
-	addr := fmt.Sprintf("%s:%d", remoteHost, remotePort)
-	udpAddr, err := net.ResolveUDPAddr("udp", addr)
+func (c *Client) GetFile(remoteHost string, remotePort int, fileName string, localFileName string) (error) {
+	fileData := []byte{}
+	err := c.sendData(remoteHost, remotePort, NewRRQDatagram(fileName, modeOctet, nil))
 	if err != nil {
-		err = HandleError(err)
 		return err
 	}
-	_, err = c.conn.WriteToUDP(data, udpAddr)
+	for {
+		n, addr, data, err := c.waitRecv()
+		if err != nil {
+			
+			return err
+		}
+		i := ParseDatagram(data)
+		switch v := i.(type) {
+		case *DATADatagram:
+			dataSegment := v.Data[:n]
+			fileData = append(fileData, dataSegment...)
+			c.sendData(addr.IP.String(), addr.Port, NewACKDatagram(v.BlockId))
+			if n < DataBlockSize {
+				return saveFileData(localFileName, fileData)
+			}
+			break
+		case *OACKDatagram:
+			c.sendData(addr.IP.String(), addr.Port, NewACKDatagram(0))
+			break
+		case *ERRDatagram:
+			return v
+			break
+		default:
+			break
+		}
+	}
+}
+
+func (c *Client) PutFile(remoteHost string, remotePort int, fileName string, LocalFileName string) (error) {
+	fs, err := os.Open(LocalFileName)
 	if err != nil {
-		err = HandleError(err)
 		return err
 	}
-	return nil
+	fileData, err := ioutil.ReadAll(fs)
+	if err != nil {
+		return err
+	}
+	bss, blockCount := splitDataSegment(fileData, DataBlockSize)
+	err = c.sendData(remoteHost, remotePort, NewWRQDatagram(fileName, modeOctet, nil))
+	if err != nil {
+		return err
+	}
+	for {
+		_, addr, data, err := c.waitRecv()
+		if err != nil {
+			
+			return err
+		}
+		i := ParseDatagram(data)
+		switch v := i.(type) {
+		case *ACKDatagram:
+			var segmentData = []byte{}
+			if uint16(blockCount) > v.BlockId {
+				segmentData = bss[v.BlockId]
+			}
+			c.sendData(addr.IP.String(), addr.Port, NewDATADatagram(v.BlockId+1, segmentData))
+		case *OACKDatagram:
+			var segmentData = []byte{}
+			if uint16(blockCount) > 0 {
+				segmentData = bss[0]
+			}
+			c.sendData(addr.IP.String(), addr.Port, NewDATADatagram(1, segmentData))
+		case *ERRDatagram:
+			return v
+		default:
+		
+		}
+	}
 }
 
 func (c *Client) waitRecv() (int, *net.UDPAddr, []byte, error) {
 	data := make([]byte, DatagramSize)
 	n, addr, err := c.conn.ReadFromUDP(data)
-	if err != nil {
-		return 0, nil, nil, err
+	data = data[:n]
+	i := ParseDatagram(data)
+	if c.printDetail {
+		PrintDynamic(ActionRecv, addr, i)
 	}
-	return n, addr, data, nil
+	return n, addr, data, err
 }
 
-func (c *Client) SendTest(remoteHost string, remotePort int, fileName string) (error) {
-	wrq := NewWRQDatagram(fileName, modeOCTET, map[string]string{"tsize": "0"})
-	rrqData := wrq.Pack()
-	rrqData = BytesFill(rrqData, DatagramSize)
-	fmt.Println(rrqData)
-	err := c.sendData(remoteHost, remotePort, rrqData)
+// 向远程服务器发送数据包（发送失败会重试，retry次）
+func (c *Client) sendData(remoteHost string, remotePort int, op DatagramOp) (error) {
+	addr := fmt.Sprintf("%s:%d", remoteHost, remotePort)
+	udpAddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
 		return err
 	}
-	fs, err := os.Open(fileName)
-	fileData, err := ioutil.ReadAll(fs)
-	datas, n := SplitDataSegment(fileData, DataBlockSize)
-	for {
-		_, addr, data, err := c.waitRecv()
-		i := ParseDatagram(data)
-		switch v := i.(type) {
-		case *ACKDatagram:
-			fmt.Println(v.BlockId)
-			if n >= int(v.BlockId+1) {
-				dg := NewDATADatagram(v.BlockId+1, datas[int(v.BlockId)])
-				bs := dg.Pack()
-				c.sendData(remoteHost, remotePort, bs)
+	for i := 0; i < c.retry; i++ {
+		_, err = c.conn.WriteToUDP(op.Pack(), udpAddr)
+		if err != nil {
+		
+		} else {
+			err = nil
+			if c.printDetail {
+				PrintDynamic(ActionSend, udpAddr, op)
 			}
 			break
-		default:
-			fmt.Println(v)
-			fmt.Println("---------")
-		}
-		_ = addr
-		_ = err
-	}
-	
-	return nil
-}
-
-func (c *Client) TestRead(remoteHost string, remotePort int, fileName string) (error) {
-	rrq := NewRRQDatagram(fileName, modeOCTET, map[string]string{"tsize": "4"})
-	rrqData := rrq.Pack()
-	rrqData = BytesFill(rrqData, DatagramSize)
-	err := c.sendData(remoteHost, remotePort, rrqData)
-	if err != nil {
-		return err
-	}
-	for {
-		_, addr, data, err := c.waitRecv()
-		fmt.Println("address:", addr.IP.String(), addr.Port)
-		i := ParseDatagram(data)
-		switch v := i.(type) {
-		case *ACKDatagram:
-			fmt.Println("ACKDatagram: ", v)
-			break
-		case *DATADatagram:
-			fmt.Println("DATADatagram: ", v)
-			fmt.Println(BytesFill(NewACKDatagram(v.BlockId).Pack(), DatagramSize))
-			c.sendData(addr.IP.String(), addr.Port, BytesFill(NewACKDatagram(v.BlockId).Pack(), DatagramSize))
-			break
-		case *OACKDatagram:
-			fmt.Println("OACKDatagram: ", v)
-			c.sendData(addr.IP.String(), addr.Port, NewACKDatagram(0).Pack())
-			break
-		default:
-			// fmt.Println("default: ", v)
-		}
-		_ = addr
-		_ = err
-	}
-	return nil
-}
-
-func RetryFunc(f func() error, time int) error {
-	var err error
-	for i := 0; i < time; time++ {
-		err = f()
-		if err == nil {
-			return nil
 		}
 	}
 	return err

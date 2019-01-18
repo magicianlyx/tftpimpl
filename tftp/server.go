@@ -21,12 +21,12 @@ func (c *Server) sendData(remoteHost string, remotePort int, data []byte) (error
 	addr := fmt.Sprintf("%s:%d", remoteHost, remotePort)
 	udpAddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
-		err = HandleError(err)
+		
 		return err
 	}
 	_, err = c.conn.WriteToUDP(data, udpAddr)
 	if err != nil {
-		err = HandleError(err)
+		
 		return err
 	}
 	return nil
@@ -72,7 +72,7 @@ func (s *Server) Listen() {
 		var bs = make([]byte, DatagramSize)
 		_, cliAddr, err := s.conn.ReadFromUDP(bs)
 		if err != nil {
-			err = HandleError(err)
+			
 			continue
 		}
 		s.dataHandle(bs, cliAddr)

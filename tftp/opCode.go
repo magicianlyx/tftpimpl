@@ -14,7 +14,7 @@ const (
 )
 
 const (
-	modeOCTET    = "octet"
+	modeOctet    = "octet"
 	modeMail     = "mail"
 	modeNetAscii = "netascii"
 )
