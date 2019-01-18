@@ -4,6 +4,8 @@ import (
 	"net"
 	"fmt"
 	"errors"
+	"os"
+	"io/ioutil"
 )
 
 var (
@@ -55,30 +57,71 @@ func (c *Client) waitRecv() (int, *net.UDPAddr, []byte, error) {
 }
 
 func (c *Client) SendTest(remoteHost string, remotePort int, fileName string) (error) {
-	wrq, err := NewWRQDatagram(fileName, modeOCTET, nil)
+	wrq := NewWRQDatagram(fileName, modeOCTET, map[string]string{"tsize": "0"})
+	rrqData := wrq.Pack()
+	rrqData = BytesFill(rrqData, DatagramSize)
+	fmt.Println(rrqData)
+	err := c.sendData(remoteHost, remotePort, rrqData)
 	if err != nil {
 		return err
 	}
-	rrqData, err := wrq.Pack()
-	if err != nil {
-		return err
+	fs, err := os.Open(fileName)
+	fileData, err := ioutil.ReadAll(fs)
+	datas, n := SplitDataSegment(fileData, DataBlockSize)
+	for {
+		_, addr, data, err := c.waitRecv()
+		i := ParseDatagram(data)
+		switch v := i.(type) {
+		case *ACKDatagram:
+			fmt.Println(v.BlockId)
+			if n >= int(v.BlockId+1) {
+				dg := NewDATADatagram(v.BlockId+1, datas[int(v.BlockId)])
+				bs := dg.Pack()
+				c.sendData(remoteHost, remotePort, bs)
+			}
+			break
+		default:
+			fmt.Println(v)
+			fmt.Println("---------")
+		}
+		_ = addr
+		_ = err
 	}
-	err = c.sendData(remoteHost, remotePort, rrqData)
-	if err != nil {
-		return err
-	}
-	_, addr, data, err := c.waitRecv()
-	i, err := ParseDatagram(data)
-	switch v := i.(type) {
-	case *ACKDatagram:
-		fmt.Println(v.OpCode)
-		fmt.Println(v.BlockId)
-		break
-	default:
-		fmt.Println(v)
-	}
-	_ = addr
 	
+	return nil
+}
+
+func (c *Client) TestRead(remoteHost string, remotePort int, fileName string) (error) {
+	rrq := NewRRQDatagram(fileName, modeOCTET, map[string]string{"tsize": "4"})
+	rrqData := rrq.Pack()
+	rrqData = BytesFill(rrqData, DatagramSize)
+	err := c.sendData(remoteHost, remotePort, rrqData)
+	if err != nil {
+		return err
+	}
+	for {
+		_, addr, data, err := c.waitRecv()
+		fmt.Println("address:", addr.IP.String(), addr.Port)
+		i := ParseDatagram(data)
+		switch v := i.(type) {
+		case *ACKDatagram:
+			fmt.Println("ACKDatagram: ", v)
+			break
+		case *DATADatagram:
+			fmt.Println("DATADatagram: ", v)
+			fmt.Println(BytesFill(NewACKDatagram(v.BlockId).Pack(), DatagramSize))
+			c.sendData(addr.IP.String(), addr.Port, BytesFill(NewACKDatagram(v.BlockId).Pack(), DatagramSize))
+			break
+		case *OACKDatagram:
+			fmt.Println("OACKDatagram: ", v)
+			c.sendData(addr.IP.String(), addr.Port, NewACKDatagram(0).Pack())
+			break
+		default:
+			// fmt.Println("default: ", v)
+		}
+		_ = addr
+		_ = err
+	}
 	return nil
 }
 

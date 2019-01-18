@@ -6,6 +6,11 @@ import (
 
 func main() {
 	c := tftp.NewClient()
-	c.SendTest("192.168.2.35",69,"2.txt")
-	// c.SendFile("192.168.2.35",69,"2.txt")
+	c.TestRead("192.168.2.35",69,"1.txt")
+	
+	// s, err := tftp.NewServer(70)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// s.Listen()
 }
