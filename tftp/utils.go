@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func Uint16ToBytes(v uint16) (b []byte) {
+func uint16ToBytes(v uint16) (b []byte) {
 	b = make([]byte, 2)
 	_ = b[1] // bounds check hint to compiler; see golang.org/issue/14808
 	b[0] = byte(v >> 8)
@@ -14,12 +14,12 @@ func Uint16ToBytes(v uint16) (b []byte) {
 	return b
 }
 
-func BytesToUint16(b []byte) uint16 {
+func bytesToUint16(b []byte) uint16 {
 	_ = b[1] // bounds check hint to compiler; see golang.org/issue/14808
 	return uint16(b[1]) | uint16(b[0])<<8
 }
 
-func BytesFill(bs []byte, size int) ([]byte) {
+func bytesFill(bs []byte, size int) ([]byte) {
 	if size <= len(bs) {
 		return bs
 	}
@@ -72,14 +72,23 @@ func retryFunc(f func() error, time int) error {
 func waitRecvTimeout(f func(), timeout time.Duration) {
 	wg := make(chan struct{}, )
 	go func() {
-		//ticker := time.NewTicker(time.Second * time.Duration(c.timeout))
-		//<-ticker.C
-		time.Sleep(timeout)
-		wg <- struct{}{}
-	}()
-	go func() {
 		f()
 		wg <- struct{}{}
 	}()
-	<-wg
+	ticker := time.NewTicker(timeout)
+	select {
+	case <-ticker.C:
+		return
+	case <-wg:
+		return
+	}
+}
+
+func fileIsExist(fileName string) bool {
+	fs, err := os.Open(fileName)
+	defer fs.Close()
+	if err != nil && os.IsNotExist(err) {
+		return false
+	}
+	return true
 }

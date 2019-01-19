@@ -105,7 +105,7 @@ func (d *RRQDatagram) Pack() ([]byte) {
 	}
 	d.Mode = strings.ToLower(d.Mode)
 	datagram := newEmptyDatagram()
-	datagram.Put(Uint16ToBytes(d.OpCode))
+	datagram.Put(uint16ToBytes(d.OpCode))
 	datagram.Put([]byte(d.FileName))
 	datagram.Put([]byte{0})
 	datagram.Put([]byte(d.Mode))
@@ -135,7 +135,7 @@ func (d *RRQDatagram) Unpack(b []byte) {
 	}
 	b = b[:GetLastNotZero(b)+1]
 	dg := newDatagramByBytes(b)
-	d.OpCode = BytesToUint16(dg.Get(2))
+	d.OpCode = bytesToUint16(dg.Get(2))
 	if d.OpCode != opRRQ {
 		return
 	}
@@ -188,7 +188,7 @@ func (d *WRQDatagram) Pack() ([]byte) {
 		return nil
 	}
 	datagram := newEmptyDatagram()
-	datagram.Put(Uint16ToBytes(d.OpCode))
+	datagram.Put(uint16ToBytes(d.OpCode))
 	datagram.Put([]byte(d.FileName))
 	datagram.Put([]byte{0})
 	datagram.Put([]byte(d.Mode))
@@ -206,7 +206,7 @@ func (d *WRQDatagram) Pack() ([]byte) {
 
 func (d *WRQDatagram) Unpack(b []byte) {
 	dg := newDatagramByBytes(b)
-	op := BytesToUint16(dg.Get(2))
+	op := bytesToUint16(dg.Get(2))
 	if op != opWRQ {
 		return
 	}
@@ -261,19 +261,19 @@ func (d *DATADatagram) Pack() ([]byte) {
 		return nil
 	}
 	dg := newEmptyDatagram()
-	dg.Put(Uint16ToBytes(d.OpCode))
-	dg.Put(Uint16ToBytes(d.BlockId))
+	dg.Put(uint16ToBytes(d.OpCode))
+	dg.Put(uint16ToBytes(d.BlockId))
 	dg.Put(d.Data)
 	return dg.ToBytes()
 }
 
 func (d *DATADatagram) Unpack(b []byte) {
 	dg := newDatagramByBytes(b)
-	d.OpCode = BytesToUint16(dg.Get(2))
+	d.OpCode = bytesToUint16(dg.Get(2))
 	if !CheckOpCode(d.OpCode) {
 		return
 	}
-	d.BlockId = BytesToUint16(dg.Get(2))
+	d.BlockId = bytesToUint16(dg.Get(2))
 	d.Data = dg.GetAll()
 	if len(d.Data) > DataBlockSize {
 		return
@@ -306,18 +306,18 @@ func (d *ACKDatagram) Pack() ([]byte) {
 		return nil
 	}
 	dg := newEmptyDatagram()
-	dg.Put(Uint16ToBytes(d.OpCode))
-	dg.Put(Uint16ToBytes(d.BlockId))
+	dg.Put(uint16ToBytes(d.OpCode))
+	dg.Put(uint16ToBytes(d.BlockId))
 	return dg.ToBytes()
 }
 
 func (d *ACKDatagram) Unpack(b []byte) () {
 	dg := newDatagramByBytes(b)
-	d.OpCode = BytesToUint16(dg.Get(2))
+	d.OpCode = bytesToUint16(dg.Get(2))
 	if d.OpCode != opACK {
 		return
 	}
-	d.BlockId = BytesToUint16(dg.Get(2))
+	d.BlockId = bytesToUint16(dg.Get(2))
 	return
 }
 
@@ -348,8 +348,8 @@ func (d *ERRDatagram) Pack() ([]byte) {
 	}
 	errMsgBytes := []byte(d.ErrMsg)
 	dg := newEmptyDatagram()
-	dg.Put(Uint16ToBytes(d.OpCode))
-	dg.Put(Uint16ToBytes(d.ErrCode))
+	dg.Put(uint16ToBytes(d.OpCode))
+	dg.Put(uint16ToBytes(d.ErrCode))
 	dg.Put(errMsgBytes)
 	dg.Put([]byte{0})
 	return dg.ToBytes()
@@ -357,11 +357,11 @@ func (d *ERRDatagram) Pack() ([]byte) {
 
 func (d *ERRDatagram) Unpack(b []byte) {
 	dg := newDatagramByBytes(b)
-	d.OpCode = BytesToUint16(dg.Get(2))
+	d.OpCode = bytesToUint16(dg.Get(2))
 	if d.OpCode != opERR {
 		return
 	}
-	d.ErrCode = BytesToUint16(dg.Get(2))
+	d.ErrCode = bytesToUint16(dg.Get(2))
 	bss := dg.SplitByByte(byte(0))
 	d.ErrMsg = string(bss[0])
 	return
@@ -400,7 +400,7 @@ func (d *OACKDatagram) Pack() ([]byte) {
 
 func (d *OACKDatagram) Unpack(b []byte) {
 	dg := newDatagramByBytes(b)
-	d.OpCode = BytesToUint16(dg.Get(2))
+	d.OpCode = bytesToUint16(dg.Get(2))
 	if d.OpCode != opOACK {
 		return
 	}
@@ -422,7 +422,7 @@ func (d *OACKDatagram) Size() int {
 
 func ParseDatagram(data []byte) (DatagramOp) {
 	dg := newDatagramByBytes(data)
-	opCode := BytesToUint16(dg.Get(2))
+	opCode := bytesToUint16(dg.Get(2))
 	if opCode == opRRQ {
 		rrq := &RRQDatagram{}
 		rrq.Unpack(data)
@@ -451,27 +451,3 @@ func ParseDatagram(data []byte) (DatagramOp) {
 		return nil
 	}
 }
-//
-// func PackRRQDatagram(fileName string, mode string, options Options) ([]byte) {
-// 	return NewRRQDatagram(fileName, mode, options).Pack()
-// }
-//
-// func PackWRQDatagram(fileName string, mode string, options Options) ([]byte) {
-// 	return NewWRQDatagram(fileName, mode, options).Pack()
-// }
-//
-// func PackDATADatagram(blockId uint16, data []byte) ([]byte) {
-// 	return NewDATADatagram(blockId, data).Pack()
-// }
-//
-// func PackACKDatagram(blockId uint16) ([]byte) {
-// 	return NewACKDatagram(blockId).Pack()
-// }
-//
-// func PackERRDatagram(errCode uint16, errMsg string) ([]byte) {
-// 	return NewERRDatagram(errCode, errMsg).Pack()
-// }
-//
-// func PackOACKDatagram(options Options) ([]byte) {
-// 	return NewOACKDatagram(options).Pack()
-// }

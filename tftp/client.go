@@ -113,7 +113,7 @@ func (c *Client) PutFile(remoteHost string, remotePort int, fileName string, Loc
 		case *ERRDatagram:
 			return v
 		default:
-			return ErrIllegalTftpOp
+			return ErrDatagram
 		}
 	}
 }
@@ -122,7 +122,7 @@ func (c *Client) PutFile(remoteHost string, remotePort int, fileName string, Loc
 func (c *Client) sendAndRecv(remoteHost string, remotePort int, op DatagramOp) (int, *net.UDPAddr, DatagramOp, error) {
 	var n int
 	var addr *net.UDPAddr
-	var data []byte
+	var data DatagramOp
 	var err error
 	var recv = false // 是否接收成功 recv为false时有可能已经接收到响应 recv为true时一定接收到响应
 	err = c.sendData(remoteHost, remotePort, op)
@@ -137,14 +137,14 @@ func (c *Client) sendAndRecv(remoteHost string, remotePort int, op DatagramOp) (
 		c.timeout,
 	)
 	if recv {
-		return n, addr, ParseDatagram(data), nil
+		return n, addr, data, nil
 	} else {
 		return n, nil, nil, ErrTimeOut
 	}
 }
 
 // 阻塞 等待服务器发送数据包
-func (c *Client) waitRecv() (int, *net.UDPAddr, []byte, error) {
+func (c *Client) waitRecv() (int, *net.UDPAddr, DatagramOp, error) {
 	data := make([]byte, DatagramSize)
 	n, addr, err := c.conn.ReadFromUDP(data)
 	data = data[:n]
@@ -152,7 +152,7 @@ func (c *Client) waitRecv() (int, *net.UDPAddr, []byte, error) {
 	if c.printDetail {
 		PrintDynamic(ActionRecv, addr, i)
 	}
-	return n, addr, data, err
+	return n, addr, i, err
 }
 
 // 向远程服务器发送数据包（发送失败会重试，retry次）
@@ -164,10 +164,7 @@ func (c *Client) sendData(remoteHost string, remotePort int, op DatagramOp) (err
 	}
 	for i := 0; i < c.retry; i++ {
 		_, err = c.conn.WriteToUDP(op.Pack(), udpAddr)
-		if err != nil {
-
-		} else {
-			err = nil
+		if err == nil {
 			if c.printDetail {
 				PrintDynamic(ActionSend, udpAddr, op)
 			}
